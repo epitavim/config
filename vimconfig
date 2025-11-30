@@ -1,0 +1,430 @@
+" ~/.vimrc
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+		
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+" https://github.com/tpope/vim-sensible
+Plugin 'tpope/vim-sensible'
+
+Plugin 'dense-analysis/ale'
+Plugin 'mg979/vim-visual-multi'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+
+runtime! plugin/sensible.vim
+
+augroup FixTermdebug
+	autocmd!
+	autocmd VimEnter * silent! delcommand Termdebug | packadd termdebug
+augroup END
+
+set encoding=utf-8 fileencodings=
+syntax on
+set number
+"set cc=80
+autocmd Filetype make setlocal noexpandtab
+		
+set nolist
+
+
+
+
+"---------- 'classic' cursor --------
+" uncomment the 3 lines below to have a 'classic' cursor look
+"let &t_SI = "\e[6 q"
+"let &t_SR = "\e[4 q"
+"let &t_EI = "\e[2 q"
+
+"---------Settings------------
+set virtualedit=onemore
+set mouse=a
+set mousemodel=extend
+autocmd BufReadPost * startinsert
+set selectmode=mouse
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+"-----------Shortcut Remappings-----------`
+nnoremap <C-c> "+y
+snoremap <C-c> <C-o>"+y
+xnoremap <C-c> "+y
+
+nnoremap <C-v> "+P
+inoremap <C-v> <C-o>"+P
+snoremap <C-v> <C-o>"+P
+xnoremap <C-v> "+P
+
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <C-o>:w<CR>
+snoremap <C-s> <C-o>:w<CR>
+xnoremap <C-s> <Esc>:w<CR>
+
+nnoremap <C-q> :update<CR>:q<CR>
+inoremap <C-q> <C-o>:update<CR><C-o>:q<CR>
+
+snoremap <C-a> <Esc><Esc>ggVG<C-g>
+
+nnoremap <C-f> /
+inoremap <C-f> <C-o>/
+xnoremap <C-f> <C-c><Esc>/<C-r>+
+snoremap <C-f> <C-o>"+y<C-o>/<C-r>+
+
+nnoremap <C-Up> N
+inoremap <C-Up> <C-o>N
+snoremap <C-Up> <Esc>N
+
+nnoremap <C-Down> n
+inoremap <C-Down> <C-o>n
+snoremap <C-Down> <Esc>n
+
+nnoremap <Ins> <Nop>
+inoremap <Ins> <Nop>
+xnoremap <Ins> <Nop>
+snoremap <Ins> <Nop>
+
+
+"----------Functions-------------
+" -Arrow Keys-
+function! GoCorrectIndent() abort
+	if getline('.') =~ '^[ \t]*$'
+		normal! $
+	else
+		normal! ^
+	endif
+endfunction
+
+" Left
+inoremap <expr> <Left> ((col('.') == 1 && line('.') > 1) \|\|
+					\getline('.')[0:col('.')-2] =~ '^[ \t]*$'  ?
+					\"\<Up>\<C-o>$" : "\<Left>")
+
+" Right 
+inoremap <expr> <Right> (col('.') >= col('$') && line('.') < line('$') ?
+			\"\<Down>\<C-o>:silent call GoCorrectIndent()\<CR>" :
+			\"\<Right>")	
+
+function! VerticalKey(key) abort
+	if col('.') == 1 || getline('.')[0:col('.')-2] =~ '^[ \t]*$'
+	execute "normal! " . a:key . ":silent call GoCorrectIndent()\<CR>"
+	else
+		execute "normal! " . a:key
+		if getline('.')[0:col('.')-2] =~ '^[ \t]*$'
+			execute "normal! $:silent call GoCorrectIndent()\<CR>"
+		endif  
+	endif
+endfunction
+
+inoremap <Down> <C-o>:silent call VerticalKey("\<lt>Down>")<CR>
+inoremap <Up> <C-o>:silent call VerticalKey("\<lt>Up>")<CR>
+
+" Tab
+autocmd FileType c setlocal dictionary+=~/afs/.vim.dict
+set complete+=k
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : 
+					\col('.') > 1 && getline('.')[col('.')-2] =~ '\k'
+					\? "\<C-n>" : "\<Tab>"
+
+
+
+" Brackets
+function! s:CheckNextChar(closed) abort
+	if getline('.')[col('.')-1] !~ '\k'
+		return a:closed . "\<Left>"
+	endif
+	return ""
+endfunction
+
+function! s:CloseBrackets(closed) abort
+	if getline('.')[col('.')-1] == a:closed
+		return "\<Right>"
+	endif
+	return a:closed
+endfunction
+
+function! s:CloseQuotes(quote) abort
+	if getline('.')[col('.')-1] == a:quote
+		return "\<Right>"
+	elseif getline('.')[col('.')-2] =~ '\k'
+		return a:quote
+	endif
+	return a:quote . <SID>CheckNextChar(a:quote)
+endfunction
+
+inoremap <expr> ( "(" . <SID>CheckNextChar(")")
+inoremap <expr> [ "[" . <SID>CheckNextChar("]")
+inoremap <expr> { "{" . <SID>CheckNextChar("}")
+inoremap <expr> ) <SID>CloseBrackets(')')
+inoremap <expr> ] <SID>CloseBrackets(']')
+inoremap <expr> } <SID>CloseBrackets('}')
+inoremap <expr> " <SID>CloseQuotes('"')
+inoremap <expr> ' <SID>CloseQuotes("'")
+
+" delete opening and closing brackets together if no element inside
+inoremap <expr> <BS> col('.') > 1 && col('.') <= len(getline('.')) &&
+			\index(['()','[]','{}','""',"''"], 
+			\getline('.')[col('.')-2] . getline('.')[col('.')-1]) != -1
+			\ ? "\<Del>\<BS>" : "\<BS>"
+
+"----Close all windows when leaving file-----
+autocmd BufWinLeave *.c call timer_start(0, {-> s:CloseAllWindows()})
+function! s:CloseAllWindows() abort
+	let l:gdb_buffer = bufnr('!gdb')
+	if l:gdb_buffer > 0 && getbufvar(l:gdb_buffer, '&buftype') ==# 'terminal'
+		call term_sendkeys(l:gdb_buffer, "quit\<CR>")
+	endif
+	
+	while winnr('$') > 0
+		if winnr('$') == 1
+			quit
+		else
+			execute winnr('$') . 'wincmd c'
+		endif
+	endwhile
+endfunction
+
+"-------F5-----------
+highlight TrueWarningMsg ctermfg=208 guifg=orange
+function! CompileFile() abort
+	silent update
+	let l:file = expand('%')
+	let l:binary = expand('%:r')
+	let l:compile_output = systemlist('gcc -Wall -Wextra ' .
+				\shellescape(l:file) . ' -o ' .
+				\shellescape(l:binary))
+
+	
+	let l:code_window = win_getid()
+	let buffer = bufnr('output')
+
+	if l:buffer > 0 && exists('*win_findbuf') && !empty(win_findbuf(l:buffer))
+		call win_gotoid(win_findbuf(l:buffer)[0])
+	else
+		execute 'botright 10new'
+		execute 'file output'
+		setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted
+		setlocal nonumber norelativenumber signcolumn=no foldcolumn=0
+	endif
+		
+
+	if v:shell_error
+		setlocal modifiable
+		silent %delete _
+		call setline(1, 'Compilation failed.')
+		call matchadd('WarningMsg', 'Compilation failed.')
+		call setline(2, l:compile_output)
+		call matchadd('WarningMsg', "undefined reference to `main'")
+		call matchadd('WarningMsg', 'error:')
+		call matchadd('Question', '\verror:\zs.*')
+		call matchadd('TrueWarningMsg', 'warning:')
+		call matchadd('Question', '\vwarning:\zs.*')
+
+		setlocal nomodifiable
+	else
+		let l:output = systemlist('./' . shellescape(l:binary) . ' 2>&1')
+
+		setlocal modifiable
+		silent %delete _
+		if !empty(l:output)
+			call setline(1, l:output)
+		else
+			if !v:shell_error
+				call setline(1, 'no output')
+			else
+				if v:shell_error == 139
+					call setline(1, 'Segmentation fault (core dumped)')
+					call matchadd('WarningMsg', 'Segmentation fault (core dumped)')
+				else
+					call setline(1, 'Program failed (exit code ' .
+									\v:shell_error . ')')
+					call matchadd('WarningMsg'. '\%1l.\{-}\ze.$')
+				endif
+			endif
+		endif
+		setlocal nomodifiable
+	
+		call system('rm ' . shellescape(l:binary))
+	endif
+	
+	normal! G
+	setlocal nomodifiable
+	call win_gotoid(l:code_window)
+	
+
+endfunction
+
+autocmd FileType c nnoremap <buffer> <F5> 
+			\:call CompileFile()<CR>
+autocmd FileType c inoremap <buffer> <F5> 
+			\<C-o>:call CompileFile()<CR>
+autocmd FileType c xnoremap <buffer> <F5> 
+			\<C-o>:call CompileFile()<CR>
+autocmd FileType c snoremap <buffer> <F5> 
+			\<C-o>:call CompileFile()<CR>
+
+
+set makeprg=gcc\ -Wall\ -Wextra\ -fdiagnostics-color=auto\ %\ -o\ %<\ &&\ ./%<
+nnoremap <F7> :update<CR>:silent !clear<CR>:make<CR>
+inoremap <F7> <C-o>:update<CR><C-o>:silent !clear<CR><C-o>:make<CR>
+xnoremap <F7> <Esc>:update<CR>:silent !clear<CR>:make<CR>
+snoremap <F7> <Esc><Esc>:update<CR>:silent !clear<CR>:make<CR>
+
+
+
+"---------ALE------------
+let g:ale_linters = { 'c' : ['gcc']}
+let g:ale_c_gcc_executable = 'gcc'
+let g:ale_gcc_options = '-Wall -Wextra'
+
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = '⚠'
+set signcolumn=yes
+
+let g:ale_floating_preview = 1
+
+highlight SignColumn ctermbg=235
+highlight ALEError cterm=None ctermbg=1
+highlight ALEWarning cterm=None ctermbg=130
+nnoremap <F4> :ALEDetail<CR>
+inoremap <F4> <C-o>:ALEDetail<CR>
+xnoremap <F4> <Esc>:ALEDetail<CR>
+snoremap <F4> <Esc>:ALEDetail<CR>
+
+"------- vim-visual-multi --------
+
+"no mapping for now...
+
+"------- skeleton file --------
+function! Skeleton() abort
+	if line('$') == 1 && getline(1) == ''
+		call setline(1,[
+					\'',
+					\'',
+					\'/*',
+					\'int main(void)',
+					\'{',
+					\'	',
+					\'	return 0;',
+					\'}',
+					\'*/'
+					\])
+	endif
+endfunction
+
+autocmd BufNewFile *.c call Skeleton()
+
+"-------- F1 -----------
+function! ToggleCommentMain() abort
+	let current_pos = getpos('.')
+	call cursor(1, 1)
+	let start = search('^\s*int\s\+main\s*(', 'nW')
+	if start == 0
+		return
+	endif
+
+	call cursor(start+1, 1)
+	normal! %
+	let end = line('.')
+
+	let above = getline(start - 1)
+	let below = getline(end + 1)
+
+	if above =~ '\s*/\*\s*$' && below =~ '^\s*\*/'
+		call setline(start - 1, substitute(above, '\s*/\*\s*$', '', ''))
+		call setline(end + 1, substitute(below, '\s*\*/\s*$', '', ''))
+	else
+		call setline(start - 1, above . '/*')
+		call setline(end + 1, below . '*/')
+	endif
+
+	call setpos('.', current_pos)
+endfunction
+
+
+nnoremap <F1> <Nop>
+inoremap <F1> <Nop>
+xnoremap <F1> <Nop>
+snoremap <F1> <Nop>
+
+autocmd FileType c nnoremap <buffer> <F1> 
+			\:silent call ToggleCommentMain()<CR>
+autocmd FileType c inoremap <buffer> <F1> 
+			\<C-o>:silent call ToggleCommentMain()<CR>
+autocmd FileType c xnoremap <buffer> <F1> 
+			\<Esc>:silent call ToggleCommentMain()<CR>
+autocmd FileType c snoremap <buffer> <F1> 
+			\<Esc>:silent call ToggleCommentMain()<CR>
+
+
+"------------ termdebug ------------
+augroup TerdebugLayout
+	autocmd!
+	autocmd User TermdebugStartPost call TermdebugLayout()
+augroup END
+
+function! TermdebugLayout() abort
+	let save_ea = &equalalways
+	set noequalalways
+	
+	Source
+	wincmd K
+
+	Program
+	wincmd J
+	resize 10
+	setlocal winfixheight
+	
+	Gdb
+	wincmd J
+	resize 10
+	setlocal winfixheight
+
+	let &equalalways = save_ea
+endfunction
+
+function! RunTermdebug() abort
+	update
+	let l:file = expand('%')
+	let l:binary = expand('%:r')
+	let l:compile_output = systemlist('gcc -Wall -Wextra -g ' .
+				\shellescape(l:file) . ' -o ' . shellescape(l:binary))
+	
+	if v:shell_error
+		echom "Compilation failed."
+		for l:error in l:compile_output
+			echom l:error
+		endfor
+
+		return
+	endif
+
+	execute 'Termdebug' l:binary
+	wincmd p
+	call TermDebugSendCommand('break ' . l:file . ':' . line('.'))
+	call TermDebugSendCommand('y')
+	call TermDebugSendCommand('run')
+
+endfunction
+
+
+nnoremap <F6> :call RunTermdebug()<CR>
+inoremap <F6> <C-o>:call RunTermdebug()<CR>
+xnoremap <F6> <Esc>:call RunTermdebug()<CR>
+snoremap <F6> <Esc><Esc>:call RunTermdebug()<CR>
+
+
+
