@@ -3,8 +3,8 @@ Dans le terminal, executez les commandes suivantes :
 `cd`  
 `git clone https://github.com/epitavim/config`  
 `mv config/vimconfig .vimrc`  
-Puis, allez dans vim, allez en mode normal avec `Esc` et executez `:PluginInstall`  
-Voila ;)
+Puis, allez dans un fichier Vim aléatoire, allez en mode normal avec `Esc` et executez `:PluginInstall`.
+Dès que le téléchargement se termine, quittez Vim et tout les changements apparaîtront.
 
 # Commandes
 - souris fonctionnelle (pour bouger le curseur et selectionner du texte)
