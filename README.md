@@ -18,3 +18,4 @@ Dès que le téléchargement se termine, quittez Vim et tout les changements app
 - `F1` pour commenter/decommenter le main
 - `F4` pour afficher l'erreur de la ligne actuelle dans une bulle
 - `F7` pour une compilation et execution plus "classique"
+- `F2` pour retirer les erreurs et warnings affichés
