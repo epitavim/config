@@ -6,7 +6,7 @@ Dans le terminal, executez les commandes suivantes :
 Puis, allez dans un fichier aléatoire avec Vim, allez en mode normal avec `Esc` et executez `:PluginInstall`.  
 Dès que le téléchargement se termine, quittez Vim et tout les changements apparaîtront.
 
-# Commandes
+# Changements
 - souris fonctionnelle (pour bouger le curseur et selectionner du texte)
 - autocomplétion avec `Tab`
 - `Ctrl + C` `Ctrl + V` `Ctrl + Z` `Ctrl + X` `Ctrl + A` fonctionnelles (comme dans un éditeur de texte)
