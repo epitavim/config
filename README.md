@@ -1,8 +1,8 @@
 # Comment installer la config
 Dans le terminal, executez les commandes suivantes :
-`cd` 
-`git clone https://github.com/epitavim/config` 
-`mv config/vimconfig .vimrc` 
+`cd`  
+`git clone https://github.com/epitavim/config`  
+`mv config/vimconfig .vimrc`  
 Puis, allez dans vim, allez en mode normal avec `Esc` puis executer `:PluginInstall`
 Voila ;)
 
