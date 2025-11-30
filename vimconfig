@@ -65,14 +65,35 @@ inoremap <C-v> <C-o>"+P
 snoremap <C-v> <C-o>"+P
 xnoremap <C-v> "+P
 
-nnoremap <C-s> :w<CR>
-inoremap <C-s> <C-o>:w<CR>
-snoremap <C-s> <C-o>:w<CR>
-xnoremap <C-s> <Esc>:w<CR>
+inoremap <C-s> <Nop>
+nnoremap <C-s> :silent w<CR>:echom "FILE SAVED"<CR>
+inoremap <C-s> <C-o>:silent w<CR><C-o>:echom "FILE SAVED"<CR>
+snoremap <C-s> <Esc><C-o>:silent w<CR><C-o>:echom "FILE SAVED"<CR>
+xnoremap <C-s> <Esc>:silent w<CR>gv<C-o>:echom "FILE SAVED"<CR>
 
-nnoremap <C-q> :update<CR>:q<CR>
-inoremap <C-q> <C-o>:update<CR><C-o>:q<CR>
+nnoremap <C-q> :silent update<CR>:q<CR>
+inoremap <C-q> <Esc>:silent update<CR>:q<CR>
+snoremap <C-q> <Esc>:silent update<CR>:q<CR>
+xnoremap <C-q> <Esc>:silent update<CR>:q<CR>
+	
+xnoremap <BS> d
+xnoremap <Del> d
 
+snoremap <C-x> <C-o>"+d
+xnoremap <C-x> "+d
+
+nnoremap <C-z> u
+inoremap <C-z> <C-o>u
+snoremap <C-z> <C-o>u
+xnoremap <C-z> <Esc>ui
+
+nnoremap <C-y> <C-r>
+inoremap <C-y> <C-o><C-r>
+snoremap <C-y> <C-o><C-r>
+xnoremap <C-y> <Esc><C-r>i
+
+nnoremap <C-a> ggVG<C-g>
+inoremap <C-a> <Esc>ggVG<C-g>
 snoremap <C-a> <Esc><Esc>ggVG<C-g>
 
 nnoremap <C-f> /
@@ -92,7 +113,6 @@ nnoremap <Ins> <Nop>
 inoremap <Ins> <Nop>
 xnoremap <Ins> <Nop>
 snoremap <Ins> <Nop>
-
 
 "----------Functions-------------
 " -Arrow Keys-
