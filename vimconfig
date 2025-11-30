@@ -299,7 +299,10 @@ inoremap <F7> <C-o>:update<CR><C-o>:silent !clear<CR><C-o>:make<CR>
 xnoremap <F7> <Esc>:update<CR>:silent !clear<CR>:make<CR>
 snoremap <F7> <Esc><Esc>:update<CR>:silent !clear<CR>:make<CR>
 
-
+nnoremap <F2> :ALEReset<CR>
+inoremap <F2> <C-o>:ALEReset<CR>
+xnoremap <F2> <Esc>:ALEReset<CR>
+snoremap <F2> <Esc>:ALEReset<CR>
 
 "---------ALE------------
 let g:ale_linters = { 'c' : ['gcc']}
