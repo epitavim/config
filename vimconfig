@@ -12,7 +12,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-sensible'
 
 Plugin 'dense-analysis/ale'
-Plugin 'mg979/vim-visual-multi'
+"Plugin 'mg979/vim-visual-multi'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
