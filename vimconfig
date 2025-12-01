@@ -60,10 +60,10 @@ nnoremap <C-c> "+y
 snoremap <C-c> <C-o>"+y
 xnoremap <C-c> "+y
 
-nnoremap <C-v> "+P
-inoremap <C-v> <C-o>"+P
-snoremap <C-v> <C-o>"+P
-xnoremap <C-v> "+P
+nnoremap <C-v> "+P'[=']
+inoremap <C-v> <C-o>"+P<C-o>'[<C-o>=']
+snoremap <C-v> <C-o>"+P<C-o>'[<C-o>=']
+xnoremap <C-v> "+P'[=']
 
 inoremap <C-s> <Nop>
 nnoremap <C-s> :silent w<CR>:echom "FILE SAVED"<CR>
