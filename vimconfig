@@ -56,26 +56,25 @@ set shiftwidth=4
 set softtabstop=4
 
 "-----------Shortcut Remappings-----------`
-nnoremap <C-c> "+y
-snoremap <C-c> <C-o>"+y
-xnoremap <C-c> "+y
+snoremap <C-c> <C-o>"+yi<C-o>gv<C-g>
+xnoremap <C-c> "+ygv
 
 nnoremap <C-v> "+P'[=']
 inoremap <C-v> <C-o>"+P<C-o>'[<C-o>=']
-snoremap <C-v> <C-o>"+P<C-o>'[<C-o>=']
+snoremap <C-v> <C-g>"+P<C-o>'[<C-o>=']
 xnoremap <C-v> "+P'[=']
 
 inoremap <C-s> <Nop>
 nnoremap <C-s> :silent w<CR>:echom "FILE SAVED"<CR>
 inoremap <C-s> <C-o>:silent w<CR><C-o>:echom "FILE SAVED"<CR>
-snoremap <C-s> <Esc><C-o>:silent w<CR><C-o>:echom "FILE SAVED"<CR>
+snoremap <C-s> <Esc><C-o>:silent w<CR><C-o>:echom "FILE SAVED"<CR>i<C-o>gv<C-g>
 xnoremap <C-s> <Esc>:silent w<CR>gv<C-o>:echom "FILE SAVED"<CR>
 
 nnoremap <C-q> :silent update<CR>:q<CR>
 inoremap <C-q> <Esc>:silent update<CR>:q<CR>
-snoremap <C-q> <Esc>:silent update<CR>:q<CR>
+snoremap <C-q> <Esc>:silent update<CR>:q<CR>i<C-o>gv<C-g>
 xnoremap <C-q> <Esc>:silent update<CR>:q<CR>
-	
+
 xnoremap <BS> d
 xnoremap <Del> d
 
@@ -84,17 +83,18 @@ xnoremap <C-x> "+d
 
 nnoremap <C-z> u
 inoremap <C-z> <C-o>u
-snoremap <C-z> <C-o>u
-xnoremap <C-z> <Esc>ui
+snoremap <C-z> <Nop>
+snoremap <C-z> <C-g>ui<C-o>gv<C-g>
+xnoremap <C-z> <Esc>u
 
 nnoremap <C-y> <C-r>
 inoremap <C-y> <C-o><C-r>
-snoremap <C-y> <C-o><C-r>
+snoremap <C-y> <C-g><C-r>i<C-o>gv<C-g>
 xnoremap <C-y> <Esc><C-r>i
 
 nnoremap <C-a> ggVG<C-g>
-inoremap <C-a> <Esc>ggVG<C-g>
-snoremap <C-a> <Esc><Esc>ggVG<C-g>
+inoremap <C-a> <C-o>gg<C-o>V<C-g><C-o>G
+snoremap <C-a> <Esc><Esc>ggVc<C-o>G<C-g>
 
 nnoremap <C-f> /
 inoremap <C-f> <C-o>/
@@ -113,6 +113,13 @@ nnoremap <Ins> <Nop>
 inoremap <Ins> <Nop>
 xnoremap <Ins> <Nop>
 snoremap <Ins> <Nop>
+
+nnoremap <F3> gg=G
+inoremap <F3> <C-o>gg<C-o>=G
+snoremap <F3> <C-o>gg<C-o>=G
+xnoremap <F3> gg=G
+
+
 
 "----------Functions-------------
 " -Arrow Keys-
@@ -154,6 +161,9 @@ set complete+=k
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : 
 					\col('.') > 1 && getline('.')[col('.')-2] =~ '\k'
 					\? "\<C-n>" : "\<Tab>"
+
+snoremap <Tab> <C-g>>i<C-o>gv<C-g>
+snoremap <S-Tab> <C-g><i<C-o>gv<C-g>
 
 
 
@@ -299,10 +309,7 @@ inoremap <F7> <C-o>:update<CR><C-o>:silent !clear<CR><C-o>:make<CR>
 xnoremap <F7> <Esc>:update<CR>:silent !clear<CR>:make<CR>
 snoremap <F7> <Esc><Esc>:update<CR>:silent !clear<CR>:make<CR>
 
-nnoremap <F2> :ALEReset<CR>
-inoremap <F2> <C-o>:ALEReset<CR>
-xnoremap <F2> <Esc>:ALEReset<CR>
-snoremap <F2> <Esc>:ALEReset<CR>
+
 
 "---------ALE------------
 let g:ale_linters = { 'c' : ['gcc']}
@@ -326,6 +333,11 @@ nnoremap <F4> :ALEDetail<CR>
 inoremap <F4> <C-o>:ALEDetail<CR>
 xnoremap <F4> <Esc>:ALEDetail<CR>
 snoremap <F4> <Esc>:ALEDetail<CR>
+
+nnoremap <F2> :ALEReset<CR>
+inoremap <F2> <C-o>:ALEReset<CR>
+xnoremap <F2> <Esc>:ALEReset<CR>
+snoremap <F2> <Esc>:ALEReset<CR>
 
 "------- vim-visual-multi --------
 
@@ -448,6 +460,3 @@ nnoremap <F6> :call RunTermdebug()<CR>
 inoremap <F6> <C-o>:call RunTermdebug()<CR>
 xnoremap <F6> <Esc>:call RunTermdebug()<CR>
 snoremap <F6> <Esc><Esc>:call RunTermdebug()<CR>
-
-
-
