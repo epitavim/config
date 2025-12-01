@@ -16,6 +16,7 @@ Dès que le téléchargement se termine, quittez Vim et tout les changements app
 - `F5` pour compiler et exécuter le fichier courant dans vim
 - `F6` pour lancer GDB (Termdebug) dan vim (pour le quitter, écrivez `quit` dans gdb)
 - `F1` pour commenter/decommenter le main
+- `F3` pour bien indenter tout le fichier 
 - `F4` pour afficher l'erreur de la ligne actuelle dans une bulle
 - `F7` pour une compilation et execution plus "classique"
 - `F2` pour retirer les erreurs et warnings affichés
