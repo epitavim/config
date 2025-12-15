@@ -55,6 +55,7 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 
+
 "-----------Shortcut Remappings-----------`
 snoremap <C-c> <C-o>"+yi<C-o>gv<C-g>
 xnoremap <C-c> "+ygv
@@ -119,6 +120,11 @@ inoremap <F3> <C-o>gg<C-o>=G
 snoremap <F3> <C-o>gg<C-o>=G
 xnoremap <F3> gg=G
 
+inoremap <expr> <CR> (col('.')>1 && getline('.')[col('.')-2:col('.')-1] =~ '{}' ?
+			\ "\<CR>\<CR>\<Up>\<Tab>" : "\<CR>")
+
+"inoremap <expr> <Esc> (col('.')>1 && getline('.')[col('.')-2:col('.')-1] =~ '{}' ?
+			\ "\<Esc>")
 
 
 "----------Functions-------------
@@ -348,7 +354,7 @@ function! Skeleton() abort
 	if line('$') == 1 && getline(1) == ''
 		call setline(1,[
 					\'',
-					\'',
+ 					\'',
 					\'/*',
 					\'int main(void)',
 					\'{',
@@ -366,21 +372,30 @@ autocmd BufNewFile *.c call Skeleton()
 function! ToggleCommentMain() abort
 	let current_pos = getpos('.')
 	call cursor(1, 1)
-	let start = search('^\s*int\s\+main\s*(', 'nW')
+	
+	let start = search('^[ \t]*int[ \t]*main', 'nW')
 	if start == 0
 		return
 	endif
 
-	call cursor(start+1, 1)
+	if getline(start) =~ '{[ \t]*$'
+		call cursor(start, 1)
+		normal! F{
+	else
+		call cursor(start+1, 1)
+	endif
+	
 	normal! %
+
 	let end = line('.')
 
 	let above = getline(start - 1)
+	let head = getline(start)
 	let below = getline(end + 1)
 
-	if above =~ '\s*/\*\s*$' && below =~ '^\s*\*/'
-		call setline(start - 1, substitute(above, '\s*/\*\s*$', '', ''))
-		call setline(end + 1, substitute(below, '\s*\*/\s*$', '', ''))
+	if above =~ '\*$' && below =~ '^*/'
+		call setline(start - 1, substitute(above, '/\*[ \t]*$', '', ''))
+		call setline(end + 1, substitute(below, '^[ \t]*\*/', '', ''))
 	else
 		call setline(start - 1, above . '/*')
 		call setline(end + 1, below . '*/')
@@ -449,9 +464,9 @@ function! RunTermdebug() abort
 
 	execute 'Termdebug' l:binary
 	wincmd p
-	call TermDebugSendCommand('break ' . l:file . ':' . line('.'))
-	call TermDebugSendCommand('y')
-	call TermDebugSendCommand('run')
+	"call TermDebugSendCommand('break ' . l:file . ':' . line('.'))
+	"call TermDebugSendCommand('y')
+	"call TermDebugSendCommand('run')
 
 endfunction
 
